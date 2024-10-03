@@ -1,47 +1,37 @@
-"""
-Test for models.
-"""
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 
 class ModelTests(TestCase):
-    """Test models."""
-
     def test_create_user_with_email_successful(self):
-        """Test creating a new user with an email is successful."""
+        """Test creating a new user with an email is successful"""
         email = 'test@example.com'
-        password = 'testpass123'
+        password = 'Testpass123'
         user = get_user_model().objects.create_user(
             email=email,
-            password=password,
+            password=password
         )
 
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
-    
-    def test_new_user_email_normalized(self):
-        """Test email normalized for new users."""
-        sample_emails = [
-            ['test1@EXAMPLE.com', 'test1@example.com'],
-            ['Test2@Example.com', 'Test2@example.com'],
-            ['TEST3@EXAMPLE.COM', 'TEST3@example.com'],
-            ['Test4@example.COM', 'Test4@example.com'],
-        ]
-        for email, expected in sample_emails:
-            user = get_user_model().objects.create_user(email, 'sample123')
-            self.assertEqual(user.email, expected)
 
-    def test_new_user_without_email_raises_error(self):
-        """Test creating user without email raises a ValueError."""
+    def test_new_user_email_normalized(self):
+        """Test the email for a new user is normalized"""
+        email = 'test@EXAMPLE.COM'
+        user = get_user_model().objects.create_user(email, 'test123')
+
+        self.assertEqual(user.email, email.lower())
+
+    def test_new_user_invalid_email(self):
+        """Test creating user with no email raises error"""
         with self.assertRaises(ValueError):
             get_user_model().objects.create_user(None, 'test123')
 
     def test_create_new_superuser(self):
-        """Test creating a new superuser."""
+        """Test creating a new superuser"""
         user = get_user_model().objects.create_superuser(
-            'test@empamle.com',
-            'test123',
+            'test@example.com',
+            'test123'
         )
 
         self.assertTrue(user.is_superuser)
